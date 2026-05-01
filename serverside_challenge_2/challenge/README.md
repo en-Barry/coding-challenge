@@ -1,24 +1,52 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+サーバーサイドチャレンジ用 Rails 7 (API only) アプリケーション。
 
-Things you may want to cover:
+## 環境
 
-* Ruby version
+- Ruby 3.1.2
+- Rails 7.0.8
+- PostgreSQL 16
+- Docker / Docker Compose
 
-* System dependencies
+## 初回セットアップ
 
-* Configuration
+```sh
+# イメージのビルド
+docker compose build
 
-* Database creation
+# DB 起動
+docker compose up -d db
 
-* Database initialization
+# DB 作成 (development / test)
+docker compose run --rm web bin/rails db:create
 
-* How to run the test suite
+# マイグレーション (まだ存在しないが今後の運用用)
+docker compose run --rm web bin/rails db:migrate
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+## 開発サーバー
 
-* Deployment instructions
+```sh
+docker compose up
+# http://localhost:3000
+```
 
-* ...
+## テスト (RSpec)
+
+```sh
+docker compose run --rm web bundle exec rspec
+```
+
+## Lint / Format (Rubocop)
+
+```sh
+# チェックのみ
+docker compose run --rm web bundle exec rubocop
+
+# 自動整形 (安全な修正のみ)
+docker compose run --rm web bundle exec rubocop -a
+
+# 自動整形 (unsafe な修正も含む)
+docker compose run --rm web bundle exec rubocop -A
+```
