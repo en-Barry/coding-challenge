@@ -4,6 +4,8 @@ class Plan < ActiveYaml::Base
   include ActiveHash::Associations
   include ActiveModel::Validations
 
+  fields :name, :provider_id
+
   belongs_to :provider
   has_many :ampere_based_rates
   has_many :usage_based_rates

@@ -4,6 +4,8 @@ class UsageBasedRate < ActiveYaml::Base
   include ActiveHash::Associations
   include ActiveModel::Validations
 
+  fields :plan_id, :kilowatt_hour_low, :kilowatt_hour_high, :rate
+
   belongs_to :plan
 
   validates :plan_id, :kilowatt_hour_low, :kilowatt_hour_high, :rate, presence: true
