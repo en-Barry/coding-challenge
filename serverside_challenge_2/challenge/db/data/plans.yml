@@ -1,0 +1,12 @@
+- id: 1
+  name: 従量電灯B
+  provider_id: 1
+- id: 2
+  name: スタンダードS
+  provider_id: 1
+- id: 3
+  name: ずっとも電気1
+  provider_id: 2
+- id: 4
+  name: おうちプラン
+  provider_id: 3
