@@ -43,3 +43,28 @@ RSpec/ExampleLength:
 
 RSpec/MultipleExpectations:
   Max: 5
+
+# ActiveHash モデルは ActiveRecord 用の cop が前提とする挙動を持たないため除外する
+Rails/RedundantPresenceValidationOnBelongsTo:
+  Exclude:
+    - "app/models/ampere_based_rate.rb"
+    - "app/models/plan.rb"
+    - "app/models/usage_based_rate.rb"
+
+Rails/HasManyOrHasOneDependent:
+  Exclude:
+    - "app/models/plan.rb"
+    - "app/models/provider.rb"
+
+# ActiveHash には find_each が無く、データ整合性 spec はクラス単位ではなくデータ全体を対象とするため除外する
+Rails/FindEach:
+  Exclude:
+    - "spec/data_consistency_spec.rb"
+
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/data_consistency_spec.rb"
+
+RSpec/IteratedExpectation:
+  Exclude:
+    - "spec/data_consistency_spec.rb"
