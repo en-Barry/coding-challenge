@@ -4,6 +4,8 @@ class AmpereBasedRate < ActiveYaml::Base
   include ActiveHash::Associations
   include ActiveModel::Validations
 
+  fields :plan_id, :ampere, :rate
+
   belongs_to :plan
 
   validates :plan_id, presence: true
