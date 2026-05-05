@@ -6,6 +6,9 @@ RSpec.describe 'YAMLデータ整合性' do
   [Provider, Plan, AmpereBasedRate, UsageBasedRate].each do |model|
     it "#{model.name} の全レコードが valid であること" do
       model.all.each do |record|
+        # 第2引数のメッセージは expect 呼び出し前に評価されるため、
+        # 先に valid? を呼んで errors を確定させてから組み立てる
+        record.valid?
         expect(record).to be_valid,
                           "#{model.name}##{record.id}: #{record.errors.full_messages.join(', ')}"
       end
