@@ -2,6 +2,7 @@
 
 class ElectricityBillSimulator
   VALID_AMPERES = [10, 15, 20, 30, 40, 50, 60].freeze
+  MAX_KWH = 9999
 
   def self.call(ampere:, kwh:)
     new(ampere: ampere, kwh: kwh).call
@@ -27,7 +28,7 @@ class ElectricityBillSimulator
     unless VALID_AMPERES.include?(@ampere)
       raise ArgumentError, "ampere must be one of #{VALID_AMPERES} (got #{@ampere})"
     end
-    raise ArgumentError, "kwh must be greater than or equal to 0 (got #{@kwh})" if @kwh.negative?
+    raise ArgumentError, "kwh must be between 0 and #{MAX_KWH} (got #{@kwh})" unless (0..MAX_KWH).cover?(@kwh)
   end
 
   # アンペア非対応プランは nil を返し、filter_map で除外する
