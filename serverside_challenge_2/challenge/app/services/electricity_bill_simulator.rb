@@ -9,8 +9,8 @@ class ElectricityBillSimulator
   end
 
   def initialize(ampere:, kwh:)
-    @ampere = Integer(ampere)
-    @kwh = Integer(kwh)
+    @ampere = parse_integer!(ampere, :ampere)
+    @kwh = parse_integer!(kwh, :kwh)
 
     validate!
   end
@@ -23,6 +23,12 @@ class ElectricityBillSimulator
   end
 
   private
+
+  def parse_integer!(value, name)
+    raise ArgumentError, "#{name} must be an integer (got #{value.inspect})" if value.is_a?(Float)
+
+    Integer(value)
+  end
 
   def validate!
     unless VALID_AMPERES.include?(@ampere)

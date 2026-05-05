@@ -127,6 +127,14 @@ RSpec.describe ElectricityBillSimulator do
       expect { described_class.call(ampere: 'abc', kwh: 400) }.to raise_error(StandardError)
     end
 
+    it 'float のアンペアで ArgumentError (丸めず弾く)' do
+      expect { described_class.call(ampere: 30.0, kwh: 400) }.to raise_error(ArgumentError, /ampere/)
+    end
+
+    it 'float の kWh で ArgumentError (丸めず弾く)' do
+      expect { described_class.call(ampere: 30, kwh: 400.5) }.to raise_error(ArgumentError, /kwh/)
+    end
+
     it 'Integer-coercible な文字列は正常に計算できる' do
       coerced = described_class.call(ampere: '30', kwh: '400')
       direct = described_class.call(ampere: 30, kwh: 400)
