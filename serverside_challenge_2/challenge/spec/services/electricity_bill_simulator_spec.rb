@@ -119,6 +119,10 @@ RSpec.describe ElectricityBillSimulator do
       expect { described_class.call(ampere: 30, kwh: -1) }.to raise_error(ArgumentError, /kwh/)
     end
 
+    it 'MAX_KWH を超えた kwh で ArgumentError' do
+      expect { described_class.call(ampere: 30, kwh: 10_000) }.to raise_error(ArgumentError, /kwh/)
+    end
+
     it 'Integer に coerce できないアンペアで例外' do
       expect { described_class.call(ampere: 'abc', kwh: 400) }.to raise_error(StandardError)
     end
