@@ -15,6 +15,18 @@ RSpec.describe Plan do
       expect(record).not_to be_valid
       expect(record.errors[:provider_id]).to be_present
     end
+
+    it 'provider_id が 0 以下だと invalid になる' do
+      record = described_class.new(id: 999, name: 'foo', provider_id: 0)
+      expect(record).not_to be_valid
+      expect(record.errors[:provider_id]).to be_present
+    end
+
+    it 'provider_id が文字列だと invalid になる' do
+      record = described_class.new(id: 999, name: 'foo', provider_id: 'abc')
+      expect(record).not_to be_valid
+      expect(record.errors[:provider_id]).to be_present
+    end
   end
 
   describe 'アソシエーション' do

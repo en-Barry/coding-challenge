@@ -51,4 +51,28 @@ RSpec.describe 'YAMLデータ整合性' do
       expect(metered_only_ids).to eq [4]
     end
   end
+
+  describe '料金レンジの連続性' do
+    it '各プランの usage_based_rates の最初の段は low=1 から始まる' do
+      Plan.all.each do |plan|
+        sorted = plan.usage_based_rates.sort_by(&:kilowatt_hour_low)
+        next if sorted.empty?
+
+        first_low = sorted.first.kilowatt_hour_low
+        expect(first_low).to eq(1), "Plan##{plan.id}: 最初の段の low は 1 のはずが #{first_low}"
+      end
+    end
+
+    it '各プランの usage_based_rates は段の間に穴も重複もなく連続している' do
+      Plan.all.each do |plan|
+        sorted = plan.usage_based_rates.sort_by(&:kilowatt_hour_low)
+        sorted.each_cons(2) do |prev_seg, next_seg|
+          expected = prev_seg.kilowatt_hour_high + 1
+          actual = next_seg.kilowatt_hour_low
+          expect(actual).to eq(expected),
+                            "Plan##{plan.id}: 段の間に穴/重複あり (#{prev_seg.kilowatt_hour_high} → #{actual})"
+        end
+      end
+    end
+  end
 end
