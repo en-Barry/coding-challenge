@@ -38,7 +38,7 @@ class ElectricityBillSimulator
     [plan, (base + usage_price(plan)).floor.to_i]
   end
 
-  # 従量課金のみプラン (Looop) は基本料金 0、それ以外は ampere 一致レコードが無ければ nil
+  # 従量課金のみプランは基本料金 0、それ以外は ampere 一致レコードが無ければ nil
   def base_price(plan)
     return BigDecimal(0) if plan.metered_only?
 
