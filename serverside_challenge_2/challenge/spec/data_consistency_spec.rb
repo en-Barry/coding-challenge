@@ -52,6 +52,17 @@ RSpec.describe 'YAMLデータ整合性' do
     end
   end
 
+  describe 'rate の型保証' do
+    it '全レコードの rate が BigDecimal を返す' do
+      [AmpereBasedRate, UsageBasedRate].each do |model|
+        model.all.each do |record|
+          expect(record.rate).to be_a(BigDecimal),
+                                 "#{model.name}##{record.id} の rate: #{record.rate.class}"
+        end
+      end
+    end
+  end
+
   describe '料金レンジの連続性' do
     it '各プランの usage_based_rates の最初の段は low=1 から始まる' do
       Plan.all.each do |plan|
