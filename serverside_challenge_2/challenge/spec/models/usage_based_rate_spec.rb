@@ -28,6 +28,38 @@ RSpec.describe UsageBasedRate do
       record.valid?
       expect(record.errors[:kilowatt_hour_low]).to include('は kilowatt_hour_high 以下でなければなりません')
     end
+
+    it 'kilowatt_hour_low が 0 以下だと invalid になる' do
+      record = described_class.new(
+        id: 999, plan_id: 1, kilowatt_hour_low: 0, kilowatt_hour_high: 100, rate: '10'
+      )
+      expect(record).not_to be_valid
+      expect(record.errors[:kilowatt_hour_low]).to be_present
+    end
+
+    it 'kilowatt_hour_high が 0 以下だと invalid になる' do
+      record = described_class.new(
+        id: 999, plan_id: 1, kilowatt_hour_low: 1, kilowatt_hour_high: 0, rate: '10'
+      )
+      expect(record).not_to be_valid
+      expect(record.errors[:kilowatt_hour_high]).to be_present
+    end
+
+    it 'rate が数値変換できない文字列だと invalid になる' do
+      record = described_class.new(
+        id: 999, plan_id: 1, kilowatt_hour_low: 1, kilowatt_hour_high: 100, rate: 'abc'
+      )
+      expect(record).not_to be_valid
+      expect(record.errors[:rate]).to be_present
+    end
+
+    it 'rate が負の数だと invalid になる' do
+      record = described_class.new(
+        id: 999, plan_id: 1, kilowatt_hour_low: 1, kilowatt_hour_high: 100, rate: '-10'
+      )
+      expect(record).not_to be_valid
+      expect(record.errors[:rate]).to be_present
+    end
   end
 
   describe '#rate' do
