@@ -1,23 +1,35 @@
 # frozen_string_literal: true
 
-def upsert!(model, filename, attribute_keys)
-  YAML.load_file(Rails.root.join('db/data', filename)).each do |attrs|
-    record = model.find_or_initialize_by(id: attrs['id'])
-    record.assign_attributes(attrs.slice(*attribute_keys.map(&:to_s)))
-    record.save!
-  end
+seed_config = [
+  { model: Provider,        file: 'providers.yml',          keys: %i[name] },
+  { model: Plan,            file: 'plans.yml',              keys: %i[name provider_id] },
+  { model: AmpereBasedRate, file: 'ampere_based_rates.yml', keys: %i[plan_id ampere rate] },
+  { model: UsageBasedRate,  file: 'usage_based_rates.yml',
+    keys: %i[plan_id kilowatt_hour_low kilowatt_hour_high rate] }
+].freeze
+
+seed_data = seed_config.map do |config|
+  config.merge(records: YAML.load_file(Rails.root.join('db/data', config[:file])))
 end
 
-upsert!(Provider, 'providers.yml', %i[name])
-upsert!(Plan, 'plans.yml', %i[name provider_id])
-upsert!(AmpereBasedRate, 'ampere_based_rates.yml', %i[plan_id ampere rate])
-upsert!(UsageBasedRate, 'usage_based_rates.yml', %i[plan_id kilowatt_hour_low kilowatt_hour_high rate])
+ActiveRecord::Base.transaction do
+  seed_data.reverse_each do |config|
+    ids_in_yaml = config[:records].pluck('id')
+    config[:model].where.not(id: ids_in_yaml).destroy_all
+  end
 
-[Provider, Plan, AmpereBasedRate, UsageBasedRate].each do |model|
-  max_id = model.maximum(:id).to_i
-  next if max_id.zero?
+  seed_data.each do |config|
+    config[:records].each do |attrs|
+      record = config[:model].find_or_initialize_by(id: attrs['id'])
+      record.assign_attributes(attrs.slice(*config[:keys].map(&:to_s)))
+      record.save!
+    end
 
-  ActiveRecord::Base.connection.execute(
-    "SELECT setval(pg_get_serial_sequence('#{model.table_name}', 'id'), #{max_id})"
-  )
+    max_id = config[:model].maximum(:id).to_i
+    next if max_id.zero?
+
+    ActiveRecord::Base.connection.execute(
+      "SELECT setval(pg_get_serial_sequence('#{config[:model].table_name}', 'id'), #{max_id})"
+    )
+  end
 end
