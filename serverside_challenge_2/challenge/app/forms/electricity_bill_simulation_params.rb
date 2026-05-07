@@ -2,14 +2,12 @@
 
 class ElectricityBillSimulationParams
   include ActiveModel::Model
-
-  AMPERE_VALUES = [10, 15, 20, 30, 40, 50, 60].freeze
-  MAX_KWH = 9_999
+  include ElectricityBillConstants
 
   attr_writer :ampere, :kwh
 
   validates :ampere, presence: true,
-                     inclusion: { in: AMPERE_VALUES, allow_blank: true }
+                     inclusion: { in: VALID_AMPERES, allow_blank: true }
   validates :kwh, presence: true,
                   numericality: {
                     only_integer: true,
