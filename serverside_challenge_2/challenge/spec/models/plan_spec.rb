@@ -5,55 +5,45 @@ require 'rails_helper'
 RSpec.describe Plan do
   describe 'バリデーション' do
     it 'name が空だと invalid になる' do
-      record = described_class.new(id: 999, name: nil, provider_id: 1)
+      record = build(:plan, name: nil)
       expect(record).not_to be_valid
       expect(record.errors[:name]).to be_present
     end
 
-    it 'provider_id が空だと invalid になる' do
-      record = described_class.new(id: 999, name: 'foo', provider_id: nil)
+    it 'provider が nil だと invalid になる' do
+      record = build(:plan, provider: nil)
       expect(record).not_to be_valid
-      expect(record.errors[:provider_id]).to be_present
-    end
-
-    it 'provider_id が 0 以下だと invalid になる' do
-      record = described_class.new(id: 999, name: 'foo', provider_id: 0)
-      expect(record).not_to be_valid
-      expect(record.errors[:provider_id]).to be_present
-    end
-
-    it 'provider_id が文字列だと invalid になる' do
-      record = described_class.new(id: 999, name: 'foo', provider_id: 'abc')
-      expect(record).not_to be_valid
-      expect(record.errors[:provider_id]).to be_present
+      expect(record.errors[:provider]).to be_present
     end
   end
 
   describe 'アソシエーション' do
-    it 'belongs_to :provider が Provider を返す' do
-      plan = described_class.all.find { |p| p.provider_id.present? }
+    let(:plan) { create(:plan) }
+
+    it 'belongs_to :provider が引ける' do
       expect(plan.provider).to be_a(Provider)
     end
 
-    it 'has_many :ampere_based_rates が AmpereBasedRate の配列を返す' do
-      plan = described_class.all.find { |p| p.ampere_based_rates.any? }
-      expect(plan.ampere_based_rates).to all(be_a(AmpereBasedRate))
+    it 'has_many :ampere_based_rates が引ける' do
+      create_list(:ampere_based_rate, 3, plan: plan)
+      expect(plan.ampere_based_rates.size).to eq 3
     end
 
-    it 'has_many :usage_based_rates が UsageBasedRate の配列を返す' do
-      plan = described_class.all.find { |p| p.usage_based_rates.any? }
-      expect(plan.usage_based_rates).to all(be_a(UsageBasedRate))
+    it 'has_many :usage_based_rates が引ける' do
+      create_list(:usage_based_rate, 2, plan: plan)
+      expect(plan.usage_based_rates.size).to eq 2
     end
   end
 
   describe '#metered_only?' do
-    it 'ampere_based_rates が存在しないプランは true を返す' do
-      plan = described_class.new(id: 9999, name: 'テスト', provider_id: 1)
+    it 'ampere_based_rates が存在しない場合に true を返す' do
+      plan = create(:plan)
       expect(plan.metered_only?).to be true
     end
 
-    it 'ampere_based_rates が存在するプランは false を返す' do
-      plan = described_class.all.find { |p| p.ampere_based_rates.any? }
+    it 'ampere_based_rates が存在する場合は false を返す' do
+      plan = create(:plan)
+      create(:ampere_based_rate, plan: plan)
       expect(plan.metered_only?).to be false
     end
   end

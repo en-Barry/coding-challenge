@@ -3,8 +3,8 @@
 FactoryBot.define do
   factory :usage_based_rate do
     association :plan
-    kilowatt_hour_low { 1 }
-    kilowatt_hour_high { 9999 }
+    sequence(:kilowatt_hour_low)  { |n| (n - 1) * 100 + 1 }
+    sequence(:kilowatt_hour_high) { |n| n * 100 }
     rate { '19.88' }
   end
 end
