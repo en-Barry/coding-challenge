@@ -15,7 +15,7 @@ class ElectricityBillSimulator
   end
 
   def call
-    Plan.all
+    Plan.includes(:provider, :ampere_based_rates, :usage_based_rates)
         .filter_map { |plan| pair_with_price(plan) }
         .sort_by { |plan, price| [price, plan.provider_id, plan.id] }
         .map { |plan, price| { provider_name: plan.provider.name, plan_name: plan.name, price: price } }
