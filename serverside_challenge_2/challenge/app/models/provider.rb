@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
-class Provider < ActiveYaml::Base
-  include ActiveHash::Associations
-  include ActiveModel::Validations
-
-  fields :name
-
-  has_many :plans
+class Provider < ApplicationRecord
+  has_many :plans, dependent: :destroy
 
   validates :name, presence: true
 end
