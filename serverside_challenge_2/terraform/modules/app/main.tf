@@ -34,7 +34,7 @@ resource "aws_cloudwatch_log_group" "ecs" {
 }
 
 # ----------------------------------------------------------------
-# Secrets Manager（器のみ作成。値は手動 or CI で投入）
+# Secrets Manager
 # ----------------------------------------------------------------
 resource "aws_secretsmanager_secret" "database_url" {
   name = "${local.name_prefix}/DATABASE_URL"
@@ -52,25 +52,18 @@ resource "aws_secretsmanager_secret" "secret_key_base" {
   }
 }
 
-# プレースホルダー値で AWSCURRENT を作成する。
-# apply 後に正しい値を手動または CI で上書きすること。
-# ignore_changes により以降の apply では Terraform が上書きしない。
+# var.database_url / var.secret_key_base が設定されている場合のみ secret version を作成する。
+# 初回 apply 時は null のままにし、RDS エンドポイント確定後に tfvars へ設定して re-apply する。
 resource "aws_secretsmanager_secret_version" "database_url" {
+  count         = var.database_url != null ? 1 : 0
   secret_id     = aws_secretsmanager_secret.database_url.id
-  secret_string = "PLACEHOLDER"
-
-  lifecycle {
-    ignore_changes = [secret_string]
-  }
+  secret_string = var.database_url
 }
 
 resource "aws_secretsmanager_secret_version" "secret_key_base" {
+  count         = var.secret_key_base != null ? 1 : 0
   secret_id     = aws_secretsmanager_secret.secret_key_base.id
-  secret_string = "PLACEHOLDER"
-
-  lifecycle {
-    ignore_changes = [secret_string]
-  }
+  secret_string = var.secret_key_base
 }
 
 # ----------------------------------------------------------------
@@ -275,7 +268,7 @@ resource "aws_ecs_service" "app" {
   name            = "${local.name_prefix}-app-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 1
+  desired_count   = var.ecs_desired_count
   launch_type     = "FARGATE"
 
   # NAT Gateway 省略のため ECS を public subnet に配置してパブリック IP を付与

@@ -40,6 +40,9 @@ module "app" {
   rails_image          = var.rails_image
   cors_allowed_origins = var.cors_allowed_origins
   origin_verify_secret = var.origin_verify_secret
+  database_url         = var.database_url
+  secret_key_base      = var.secret_key_base
+  ecs_desired_count    = var.ecs_desired_count
 }
 
 module "db" {

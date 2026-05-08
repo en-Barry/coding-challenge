@@ -41,3 +41,20 @@ variable "origin_verify_secret" {
   sensitive   = true
   description = "CloudFront → ALB 間の X-Origin-Verify ヘッダー値"
 }
+
+variable "database_url" {
+  type      = string
+  sensitive = true
+  default   = null
+}
+
+variable "secret_key_base" {
+  type      = string
+  sensitive = true
+  default   = null
+}
+
+variable "ecs_desired_count" {
+  type    = number
+  default = 0
+}
