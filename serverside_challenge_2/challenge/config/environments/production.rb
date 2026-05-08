@@ -46,13 +46,12 @@ Rails.application.configure do
   #     HTTP→HTTPS 301 リダイレクトを返す（Rails は origin 通信を HTTP と認識するため）
   #   - Rails 7.0 は assume_ssl 未対応（Rails 7.1 以降の機能）
   #
-  # request.ssl? の動作について:
-  #   CloudFront が X-Forwarded-Proto: https を付与し ALB が転送するため
-  #   Rack は request.ssl? == true を正しく返す（X-Forwarded-Proto は無条件に読まれる）。
-  #   また config.action_dispatch.trusted_proxies のデフォルトは 10.0.0.0/8 を含むため
-  #   ALB（10.0.x.x）からのヘッダーは信頼される。
-  #   このアプリは stateless JSON API（Cookie・セッション・URL 生成なし）のため
-  #   force_ssl=false による副作用（Secure Cookie・HSTS の欠如）は無害。
+  # request.ssl? について:
+  #   CloudFront→ALB 間は HTTP (origin_protocol_policy = "http-only") のため、
+  #   ALB が付与する X-Forwarded-Proto は "http" になる。
+  #   よって Rails では request.ssl? == false となるが、このアプリは
+  #   stateless JSON API（Cookie・セッション・URL 生成なし）のため無害。
+  #   エンドユーザーへの HTTPS 強制は CloudFront 側で完結している。
   config.force_ssl = false
 
   # Include generic and useful information about system operation, but avoid logging too much
