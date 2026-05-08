@@ -66,7 +66,7 @@ export function SimulationForm({ onSubmit, isLoading }: Props) {
           min={0}
           max={9999}
           placeholder="例: 300"
-          {...register("kwh", { valueAsNumber: true })}
+          {...register("kwh")}
         />
         {errors.kwh && (
           <p className="text-sm text-destructive">{errors.kwh.message}</p>
