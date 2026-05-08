@@ -52,6 +52,27 @@ resource "aws_secretsmanager_secret" "secret_key_base" {
   }
 }
 
+# プレースホルダー値で AWSCURRENT を作成する。
+# apply 後に正しい値を手動または CI で上書きすること。
+# ignore_changes により以降の apply では Terraform が上書きしない。
+resource "aws_secretsmanager_secret_version" "database_url" {
+  secret_id     = aws_secretsmanager_secret.database_url.id
+  secret_string = "PLACEHOLDER"
+
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "secret_key_base" {
+  secret_id     = aws_secretsmanager_secret.secret_key_base.id
+  secret_string = "PLACEHOLDER"
+
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
+}
+
 # ----------------------------------------------------------------
 # IAM
 # ----------------------------------------------------------------
