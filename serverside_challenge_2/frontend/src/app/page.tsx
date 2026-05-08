@@ -37,7 +37,7 @@ export default function Home() {
         setError("通信エラーが発生しました。しばらく経ってから再試行してください。");
       }
     } finally {
-      setLoading(false);
+      if (abortRef.current === controller) setLoading(false);
     }
   }
 
