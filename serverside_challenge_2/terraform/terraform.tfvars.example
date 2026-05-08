@@ -1,0 +1,6 @@
+project               = "enechange-coding-challenge"
+env                   = "prod"
+region                = "ap-northeast-1"
+rails_image           = "123456789.dkr.ecr.ap-northeast-1.amazonaws.com/enechange-coding-challenge-prod-app:latest"
+cors_allowed_origins  = "https://your-app.vercel.app"
+origin_verify_secret  = "CHANGE_ME"  # 推測困難なランダム文字列に変更すること
