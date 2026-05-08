@@ -40,15 +40,10 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
 
-  # CloudFront が HTTPS 終端して ALB へ HTTP で転送するため X-Forwarded-Proto が http になる
-  # force_ssl の誤検知を防ぐため assume_ssl を有効化する
-  config.assume_ssl = true
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
-  config.ssl_options = {
-    redirect: { exclude: ->(request) { request.path == '/healthz' } }
-  }
+  # CloudFront の viewer_protocol_policy=redirect-to-https で HTTPS を強制するため
+  # Rails の force_ssl は無効化する。
+  # (Rails 7.0 は assume_ssl 未対応。force_ssl を有効にすると ALB ドメインへ誤リダイレクトする)
+  config.force_ssl = false
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
