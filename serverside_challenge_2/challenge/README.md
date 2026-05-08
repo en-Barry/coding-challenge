@@ -64,6 +64,8 @@ DB 接続を確認するヘルスチェックエンドポイント。
 - 正常時: 200 OK, `{"status":"ok"}`
 - DB 接続失敗時: 503 Service Unavailable, `{"status":"error"}`
 
+本番: `https://d1qlohhwjtfdr1.cloudfront.net/healthz`
+
 ## 本番ビルド
 
 ```sh
@@ -101,3 +103,54 @@ docker run --rm \
 ```
 
 起動後、`curl http://localhost:3000/healthz` で疎通確認。
+
+## 本番デプロイ (AWS ECS + Terraform)
+
+インフラは Terraform で管理しています。詳細は `serverside_challenge_2/terraform/` を参照。
+
+### 本番環境情報
+
+| 項目 | 値 |
+|---|---|
+| CloudFront (API) | `https://d1qlohhwjtfdr1.cloudfront.net` |
+| ECS クラスター | `enechange-coding-challenge-prod-cluster` |
+| ECR リポジトリ | `866642010952.dkr.ecr.ap-northeast-1.amazonaws.com/enechange-coding-challenge-prod-app` |
+
+### デプロイ手順
+
+```sh
+# 1. ECR にログイン
+aws ecr get-login-password --region ap-northeast-1 \
+  | docker login --username AWS --password-stdin \
+    866642010952.dkr.ecr.ap-northeast-1.amazonaws.com
+
+# 2. イメージをビルドして push (Apple Silicon の場合は --platform linux/amd64 必須)
+docker buildx build --platform linux/amd64 \
+  -f Dockerfile.production \
+  -t 866642010952.dkr.ecr.ap-northeast-1.amazonaws.com/enechange-coding-challenge-prod-app:latest \
+  --push .
+
+# 3. ECS Service を最新タスク定義で更新
+cd ../terraform && terraform apply
+```
+
+### DB マイグレーション / Seed (ECS ワンオフタスク)
+
+```sh
+CLUSTER=enechange-coding-challenge-prod-cluster
+TASKDEF=$(cd serverside_challenge_2/terraform && terraform output -raw ecs_task_definition_arn)
+SUBNET=$(cd serverside_challenge_2/terraform && terraform output -json public_subnet_ids | jq -r '.[0]')
+SG=$(cd serverside_challenge_2/terraform && terraform output -raw ecs_sg_id)
+
+# マイグレーション
+aws ecs run-task --cluster "$CLUSTER" --task-definition "$TASKDEF" \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[$SUBNET],securityGroups=[$SG],assignPublicIp=ENABLED}" \
+  --overrides '{"containerOverrides":[{"name":"app","command":["bundle","exec","rails","db:migrate"]}]}'
+
+# Seed 投入 (冪等)
+aws ecs run-task --cluster "$CLUSTER" --task-definition "$TASKDEF" \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[$SUBNET],securityGroups=[$SG],assignPublicIp=ENABLED}" \
+  --overrides '{"containerOverrides":[{"name":"app","command":["bundle","exec","rails","db:seed"]}]}'
+```
