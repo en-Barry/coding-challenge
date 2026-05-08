@@ -12,7 +12,7 @@ origin_verify_secret  = "CHANGE_ME"  # 推測困難なランダム文字列に�
 ecs_desired_count = 0  # シークレット設定後に 1 へ変更
 
 # terraform output db_endpoint で RDS エンドポイントを確認してから設定
-# database_url = "postgresql://appuser:PASSWORD@ENDPOINT:5432/appdb"
+# database_url = "postgresql://postgres:PASSWORD@ENDPOINT:5432/app"
 
 # openssl rand -hex 64 で生成
 # secret_key_base = "your-secret-key-base"
