@@ -30,3 +30,7 @@
 
 # Claude Code のローカル設定
 /.claude/
+
+# ローカル環境変数（.env.example はコミット対象）
+/.env
+/.env.local
