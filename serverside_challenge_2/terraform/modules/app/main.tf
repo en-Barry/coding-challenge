@@ -1,5 +1,8 @@
 locals {
   name_prefix = "${var.project}-${var.env}"
+  # ALB/TG は 32 文字制限。最長サフィックス "-app-tg"(7文字) を考慮して
+  # プレフィックスを 25 文字以内に収め、末尾ハイフンを除去する
+  name_short = trimsuffix(substr(local.name_prefix, 0, 25), "-")
 }
 
 # ----------------------------------------------------------------
@@ -176,8 +179,7 @@ resource "aws_ecs_task_definition" "app" {
 # ALB
 # ----------------------------------------------------------------
 resource "aws_lb" "main" {
-  # AWS ALB 名の上限は 32 文字。project 変数が長い場合は短縮すること
-  name               = substr("${local.name_prefix}-alb", 0, 32)
+  name               = "${local.name_short}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.sg_alb_id]
@@ -189,8 +191,7 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "app" {
-  # AWS ターゲットグループ名の上限は 32 文字
-  name        = substr("${local.name_prefix}-app-tg", 0, 32)
+  name        = "${local.name_short}-app-tg"
   port        = 3000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
