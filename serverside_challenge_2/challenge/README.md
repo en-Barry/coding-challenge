@@ -130,17 +130,22 @@ docker buildx build --platform linux/amd64 \
   -t 866642010952.dkr.ecr.ap-northeast-1.amazonaws.com/enechange-coding-challenge-prod-app:latest \
   --push .
 
-# 3. ECS Service を最新タスク定義で更新
-cd ../terraform && terraform apply
+# 3. ECS Service を強制的に最新イメージで再デプロイ
+# (:latest タグは terraform apply では差分が出ないため --force-new-deployment を使う)
+aws ecs update-service \
+  --cluster enechange-coding-challenge-prod-cluster \
+  --service enechange-coding-challenge-prod-app-service \
+  --force-new-deployment \
+  --region ap-northeast-1
 ```
 
 ### DB マイグレーション / Seed (ECS ワンオフタスク)
 
 ```sh
 CLUSTER=enechange-coding-challenge-prod-cluster
-TASKDEF=$(cd serverside_challenge_2/terraform && terraform output -raw ecs_task_definition_arn)
-SUBNET=$(cd serverside_challenge_2/terraform && terraform output -json public_subnet_ids | jq -r '.[0]')
-SG=$(cd serverside_challenge_2/terraform && terraform output -raw ecs_sg_id)
+TASKDEF=$(cd ../terraform && terraform output -raw ecs_task_definition_arn)
+SUBNET=$(cd ../terraform && terraform output -json public_subnet_ids | jq -r '.[0]')
+SG=$(cd ../terraform && terraform output -raw ecs_sg_id)
 
 # マイグレーション
 aws ecs run-task --cluster "$CLUSTER" --task-definition "$TASKDEF" \
