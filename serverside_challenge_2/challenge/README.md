@@ -6,7 +6,7 @@
 
 - Ruby 3.1.2
 - Rails 7.0.8
-- PostgreSQL 16
+- PostgreSQL 18
 - Docker / Docker Compose
 
 ## 初回セットアップ
