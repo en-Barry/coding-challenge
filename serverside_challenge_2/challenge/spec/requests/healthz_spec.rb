@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Healthz', type: :request do
   describe 'GET /healthz' do
-    context '正常系' do
+    context 'when DB 接続が健全なとき' do
       it '200 status と {"status":"ok"} を返す' do
         get '/healthz'
 
@@ -13,7 +13,7 @@ RSpec.describe 'Healthz', type: :request do
       end
     end
 
-    context 'DB 接続失敗時' do
+    context 'when DB 接続が失敗するとき' do
       before do
         allow(ActiveRecord::Base.connection).to receive(:execute).and_raise(StandardError, 'Connection lost')
       end
