@@ -42,3 +42,13 @@ output "rds_master_user_secret_arn" {
   value       = module.db.master_user_secret_arn
   description = "RDS が自動生成したマスターパスワードの Secrets Manager ARN"
 }
+
+output "public_subnet_ids" {
+  value       = module.network.public_subnet_ids
+  description = "ECS run-task 実行時の subnet ID リスト"
+}
+
+output "ecs_sg_id" {
+  value       = module.app.ecs_sg_id
+  description = "ECS run-task 実行時のセキュリティグループ ID"
+}

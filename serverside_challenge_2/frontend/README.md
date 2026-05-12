@@ -108,10 +108,17 @@ Vitest + Testing Library + jsdom で 16 テストを実行。
 
 ## 本番ビルド & デプロイ
 
-Vercel へのデプロイを想定:
+### 本番環境情報
+
+| 項目 | 値 |
+|---|---|
+| Vercel URL | `https://coding-challenge-umber-beta.vercel.app` |
+| `NEXT_PUBLIC_API_URL` | `https://d1qlohhwjtfdr1.cloudfront.net` |
+
+### Vercel デプロイ手順
 
 1. Vercel プロジェクトの **Root Directory** を `serverside_challenge_2/frontend` に設定
-2. 環境変数 `NEXT_PUBLIC_API_URL` に CloudFront URL を設定
+2. Environment Variables に `NEXT_PUBLIC_API_URL = https://d1qlohhwjtfdr1.cloudfront.net` を追加
 3. `npm run build` が通ることを確認してから deploy
 
 ## 既知の制約
