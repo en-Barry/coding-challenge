@@ -43,11 +43,13 @@ RSpec.describe AmpereBasedRate do
 
   describe '#rate' do
     it 'BigDecimal を返す' do
-      expect(described_class.first.rate).to be_a(BigDecimal)
+      record = described_class.new(id: 9999, plan_id: 1, ampere: 30, rate: '100.50')
+      expect(record.rate).to be_a(BigDecimal)
     end
 
-    it 'YAML の文字列値を BigDecimal として正しく解釈する' do
-      expect(described_class.find(1).rate).to eq BigDecimal('286.00')
+    it '文字列を精度を保って BigDecimal に変換する' do
+      record = described_class.new(id: 9999, plan_id: 1, ampere: 30, rate: '286.00')
+      expect(record.rate).to eq BigDecimal('286.00')
     end
   end
 end

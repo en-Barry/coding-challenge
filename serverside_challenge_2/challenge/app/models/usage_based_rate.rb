@@ -38,7 +38,7 @@ class UsageBasedRate < ActiveYaml::Base
 
   def low_must_not_exceed_high
     return if kilowatt_hour_low.nil? || kilowatt_hour_high.nil?
-    return unless kilowatt_hour_low > kilowatt_hour_high
+    return unless kilowatt_hour_low >= kilowatt_hour_high
 
     errors.add(:kilowatt_hour_low, :must_not_exceed_high)
   end

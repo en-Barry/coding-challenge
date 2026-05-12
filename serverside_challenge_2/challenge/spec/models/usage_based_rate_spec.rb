@@ -21,12 +21,20 @@ RSpec.describe UsageBasedRate do
       expect(record.errors[:kilowatt_hour_low]).to be_present
     end
 
+    it 'kilowatt_hour_low と kilowatt_hour_high が同値だと invalid になる' do
+      record = described_class.new(
+        id: 999, plan_id: 1, kilowatt_hour_low: 100, kilowatt_hour_high: 100, rate: '10'
+      )
+      expect(record).not_to be_valid
+      expect(record.errors[:kilowatt_hour_low]).to be_present
+    end
+
     it 'low > high のエラーメッセージが日本語で返る' do
       record = described_class.new(
         id: 999, plan_id: 1, kilowatt_hour_low: 200, kilowatt_hour_high: 100, rate: '10'
       )
       record.valid?
-      expect(record.errors[:kilowatt_hour_low]).to include('は kilowatt_hour_high 以下でなければなりません')
+      expect(record.errors[:kilowatt_hour_low]).to include('は kilowatt_hour_high より小さくなければなりません')
     end
 
     it 'kilowatt_hour_low が 0 以下だと invalid になる' do
@@ -64,11 +72,13 @@ RSpec.describe UsageBasedRate do
 
   describe '#rate' do
     it 'BigDecimal を返す' do
-      expect(described_class.first.rate).to be_a(BigDecimal)
+      record = described_class.new(id: 9999, plan_id: 1, kilowatt_hour_low: 1, kilowatt_hour_high: 120, rate: '19.88')
+      expect(record.rate).to be_a(BigDecimal)
     end
 
-    it 'YAML の文字列値を BigDecimal として正しく解釈する' do
-      expect(described_class.find(1).rate).to eq BigDecimal('19.88')
+    it '文字列を精度を保って BigDecimal に変換する' do
+      record = described_class.new(id: 9999, plan_id: 1, kilowatt_hour_low: 1, kilowatt_hour_high: 120, rate: '19.88')
+      expect(record.rate).to eq BigDecimal('19.88')
     end
   end
 end

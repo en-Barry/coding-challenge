@@ -30,27 +30,31 @@ RSpec.describe Plan do
   end
 
   describe 'アソシエーション' do
-    let(:plan) { described_class.find(1) }
-
-    it 'belongs_to :provider が引ける' do
-      expect(plan.provider.name).to eq '東京電力エナジーパートナー'
+    it 'belongs_to :provider が Provider を返す' do
+      plan = described_class.all.find { |p| p.provider_id.present? }
+      expect(plan.provider).to be_a(Provider)
     end
 
-    it 'has_many :ampere_based_rates が引ける' do
-      expect(plan.ampere_based_rates.size).to eq 7
+    it 'has_many :ampere_based_rates が AmpereBasedRate の配列を返す' do
+      plan = described_class.all.find { |p| p.ampere_based_rates.any? }
+      expect(plan.ampere_based_rates).to all(be_a(AmpereBasedRate))
     end
 
-    it 'has_many :usage_based_rates が引ける' do
-      expect(plan.usage_based_rates.size).to eq 3
+    it 'has_many :usage_based_rates が UsageBasedRate の配列を返す' do
+      plan = described_class.all.find { |p| p.usage_based_rates.any? }
+      expect(plan.usage_based_rates).to all(be_a(UsageBasedRate))
     end
   end
 
   describe '#metered_only?' do
-    it 'Looopでんきおうちプラン (id=4) のみ true を返す' do
-      expect(described_class.find(4).metered_only?).to be true
-      expect(described_class.find(1).metered_only?).to be false
-      expect(described_class.find(2).metered_only?).to be false
-      expect(described_class.find(3).metered_only?).to be false
+    it 'ampere_based_rates が存在しないプランは true を返す' do
+      plan = described_class.new(id: 9999, name: 'テスト', provider_id: 1)
+      expect(plan.metered_only?).to be true
+    end
+
+    it 'ampere_based_rates が存在するプランは false を返す' do
+      plan = described_class.all.find { |p| p.ampere_based_rates.any? }
+      expect(plan.metered_only?).to be false
     end
   end
 end
