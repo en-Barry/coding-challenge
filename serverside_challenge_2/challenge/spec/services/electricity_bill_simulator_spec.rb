@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe ElectricityBillSimulator do
-  include_context 'with seed data'
-
   subject(:result) { described_class.call(ampere: ampere, kwh: kwh) }
+
+  include_context 'with seed data'
 
   def price_for(plan_name, ampere:, kwh:)
     described_class.call(ampere: ampere, kwh: kwh)
@@ -66,7 +66,6 @@ RSpec.describe ElectricityBillSimulator do
         expect(plan_names).to include('おうちプラン')
       end
     end
-
   end
 
   describe '横断' do
