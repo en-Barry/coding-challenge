@@ -25,12 +25,12 @@ RSpec.describe 'Healthz', type: :request do
         expect(response.parsed_body).to eq({ 'status' => 'error' })
       end
 
-      it 'Rails.logger.warn が呼ばれる' do
-        allow(Rails.logger).to receive(:warn)
+      it 'Rails.logger.error が呼ばれる' do
+        allow(Rails.logger).to receive(:error)
 
         get '/healthz'
 
-        expect(Rails.logger).to have_received(:warn).with(/Healthz DB check failed/)
+        expect(Rails.logger).to have_received(:error).with(/Healthz check failed/)
       end
     end
   end
