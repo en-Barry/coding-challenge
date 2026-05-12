@@ -46,6 +46,8 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_hash (3.3.1)
+      activesupport (>= 5.0.0)
     activejob (7.0.8)
       activesupport (= 7.0.8)
       globalid (>= 0.3.6)
@@ -157,6 +159,9 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
+    rails-i18n (7.0.10)
+      i18n (>= 0.7, < 2)
+      railties (>= 6.0.0, < 8)
     railties (7.0.8)
       actionpack (= 7.0.8)
       activesupport (= 7.0.8)
@@ -234,12 +239,14 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_hash (~> 3.3)
   bootsnap
   debug
   factory_bot_rails (~> 6.4)
   pg (>= 1.6.0, < 2.0)
   puma (~> 5.0)
   rails (~> 7.0.8)
+  rails-i18n (~> 7.0)
   rspec-rails (~> 6.1)
   rubocop
   rubocop-performance

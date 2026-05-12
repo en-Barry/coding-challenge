@@ -1,0 +1,8 @@
+ja:
+  activemodel:
+    errors:
+      models:
+        usage_based_rate:
+          attributes:
+            kilowatt_hour_low:
+              must_not_exceed_high: は kilowatt_hour_high より小さくなければなりません
