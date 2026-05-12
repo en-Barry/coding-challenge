@@ -237,7 +237,7 @@ DEPENDENCIES
   bootsnap
   debug
   factory_bot_rails (~> 6.4)
-  pg (>= 1.6.0)
+  pg (>= 1.6.0, < 2.0)
   puma (~> 5.0)
   rails (~> 7.0.8)
   rspec-rails (~> 6.1)
