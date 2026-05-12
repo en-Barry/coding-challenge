@@ -13,7 +13,7 @@ RSpec.describe ElectricityBillSimulator do
   end
 
   # 基本料金あり + 従量段階制（東京電力エナジーパートナー / 従量電灯B）
-  describe '基本料金あり + 従量段階制 (Plan id=1)' do
+  describe '基本料金あり + 従量段階制 (従量電灯B)' do
     it '0kWh は基本料金のみ' do
       expect(price_for('従量電灯B', ampere: 30, kwh: 0)).to eq 858
     end
@@ -40,7 +40,7 @@ RSpec.describe ElectricityBillSimulator do
   end
 
   # 基本料金なし + 従量均一（Looopでんき / おうちプラン）
-  describe '基本料金なし + 従量均一 (Plan id=4: Looop)' do
+  describe '基本料金なし + 従量均一 (おうちプラン)' do
     it '0kWh は 0 円' do
       expect(price_for('おうちプラン', ampere: 30, kwh: 0)).to eq 0
     end
@@ -51,7 +51,7 @@ RSpec.describe ElectricityBillSimulator do
   end
 
   # アンペア非対応プランの除外（東京ガス / ずっとも電気1）
-  describe 'アンペア非対応プランの除外 (Plan id=3: ずっとも電気1)' do
+  describe 'アンペア非対応プランの除外 (ずっとも電気1)' do
     let(:plan_names) { result.pluck(:plan_name) }
 
     context 'when ampere=20A (ずっとも電気1 は非対応)' do
@@ -62,7 +62,7 @@ RSpec.describe ElectricityBillSimulator do
         expect(plan_names).not_to include('ずっとも電気1')
       end
 
-      it 'Looop おうちプランは含まれる (metered_only? は基本料金 0 で計算続行)' do
+      it 'Looop おうちプランは含まれる (基本料金 0 円で計算続行)' do
         expect(plan_names).to include('おうちプラン')
       end
     end
@@ -72,8 +72,8 @@ RSpec.describe ElectricityBillSimulator do
     let(:ampere) { 30 }
     let(:kwh) { 400 }
 
-    it '全プラン対応のアンペアでは 4 プラン全て返る' do
-      expect(result.size).to eq 4
+    it '全プラン対応のアンペアでは全プランが返る' do
+      expect(result.size).to eq Plan.count
     end
 
     it 'price 昇順で並ぶ' do

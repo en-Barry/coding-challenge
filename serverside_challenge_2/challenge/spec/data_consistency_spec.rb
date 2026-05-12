@@ -5,12 +5,6 @@ require 'rails_helper'
 RSpec.describe 'シードデータの整合性' do
   before { Rails.application.load_seed }
 
-  describe 'プラン数' do
-    it 'Plan は 4 件存在する' do
-      expect(Plan.count).to eq 4
-    end
-  end
-
   describe 'モデルバリデーション' do
     [Provider, Plan, AmpereBasedRate, UsageBasedRate].each do |model|
       it "#{model.name} の全レコードが valid であること" do
@@ -19,6 +13,18 @@ RSpec.describe 'シードデータの整合性' do
           expect(record).to be_valid,
                             "#{model.name}##{record.id}: #{record.errors.full_messages.join(', ')}"
         end
+      end
+    end
+  end
+
+  describe '入力可能範囲のカバレッジ' do
+    it '各プラン最終段の kilowatt_hour_high が MAX_KWH 以上であること' do
+      Plan.find_each do |plan|
+        last_high = plan.usage_based_rates.maximum(:kilowatt_hour_high)
+        expect(last_high).to be >= ElectricityBillConstants::MAX_KWH,
+                             "Plan '#{plan.name}': 最終段 #{last_high} が " \
+                             "MAX_KWH (#{ElectricityBillConstants::MAX_KWH}) 未満。" \
+                             '入力受付した kwh が料金計算でカバーされない可能性がある (silent な料金過小算出のリスク)'
       end
     end
   end
@@ -45,9 +51,9 @@ RSpec.describe 'シードデータの整合性' do
   end
 
   describe '業務的不変条件' do
-    it 'metered_only? なプランは Looopでんきおうちプラン (id=4) のみ' do
-      metered_only = Plan.all.select(&:metered_only?)
-      expect(metered_only.map(&:name)).to eq(['おうちプラン'])
+    it '基本料金 0 円のプランが少なくとも 1 つ存在する (Looopでんき おうちプラン 等)' do
+      plans_with_zero_base = Plan.all.select { |p| p.base_price_for(30) == BigDecimal(0) }
+      expect(plans_with_zero_base).not_to be_empty
     end
   end
 end

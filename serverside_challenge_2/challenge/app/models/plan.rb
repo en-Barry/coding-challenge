@@ -7,7 +7,9 @@ class Plan < ApplicationRecord
 
   validates :name, presence: true
 
-  def metered_only?
-    ampere_based_rates.empty?
+  def base_price_for(ampere)
+    return BigDecimal(0) if ampere_based_rates.empty?
+
+    ampere_based_rates.detect { |r| r.ampere == ampere }&.rate
   end
 end

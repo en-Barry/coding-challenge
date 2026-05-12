@@ -20,9 +20,7 @@ RSpec.describe UsageBasedRate do
     end
 
     it 'kilowatt_hour_low と kilowatt_hour_high が同値だと invalid になる' do
-      record = described_class.new(
-        id: 999, plan_id: 1, kilowatt_hour_low: 100, kilowatt_hour_high: 100, rate: '10'
-      )
+      record = build(:usage_based_rate, kilowatt_hour_low: 100, kilowatt_hour_high: 100)
       expect(record).not_to be_valid
       expect(record.errors[:kilowatt_hour_low]).to be_present
     end
