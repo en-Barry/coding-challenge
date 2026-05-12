@@ -40,11 +40,19 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
-  config.ssl_options = {
-    redirect: { exclude: ->(request) { request.path == '/healthz' } }
-  }
+  # SSL の強制は CloudFront の viewer_protocol_policy=redirect-to-https で行う。
+  # Rails の force_ssl を無効にする理由:
+  #   - force_ssl = true にすると ActionDispatch::SSL が ALB ドメインへ
+  #     HTTP→HTTPS 301 リダイレクトを返す（Rails は origin 通信を HTTP と認識するため）
+  #   - Rails 7.0 は assume_ssl 未対応（Rails 7.1 以降の機能）
+  #
+  # request.ssl? について:
+  #   CloudFront→ALB 間は HTTP (origin_protocol_policy = "http-only") のため、
+  #   ALB が付与する X-Forwarded-Proto は "http" になる。
+  #   よって Rails では request.ssl? == false となるが、このアプリは
+  #   stateless JSON API（Cookie・セッション・URL 生成なし）のため無害。
+  #   エンドユーザーへの HTTPS 強制は CloudFront 側で完結している。
+  config.force_ssl = false
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
