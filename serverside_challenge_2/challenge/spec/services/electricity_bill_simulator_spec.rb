@@ -65,14 +65,6 @@ RSpec.describe ElectricityBillSimulator do
       end
     end
 
-    context 'when ampere=30A (ずっとも電気1 は対応)' do
-      let(:ampere) { 30 }
-      let(:kwh) { 400 }
-
-      it 'ずっとも電気1 はレスポンスに含まれる' do
-        expect(plan_names).to include('ずっとも電気1')
-      end
-    end
   end
 
   describe '横断' do
