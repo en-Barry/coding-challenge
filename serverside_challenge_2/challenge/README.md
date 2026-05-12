@@ -21,8 +21,11 @@ docker compose up -d db
 # DB 作成 (development / test)
 docker compose run --rm web bin/rails db:create
 
-# マイグレーション (まだ存在しないが今後の運用用)
+# マイグレーション
 docker compose run --rm web bin/rails db:migrate
+
+# マスタデータ投入 (providers / plans / rates)
+docker compose run --rm web bin/rails db:seed
 ```
 
 ## 開発サーバー

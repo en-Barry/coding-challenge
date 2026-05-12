@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'GET /api/v1/electricity_bill_simulations' do
+  include_context 'with seed data'
+
   let(:valid_params) { { ampere: 30, kwh: 400 } }
 
   context 'with valid params' do

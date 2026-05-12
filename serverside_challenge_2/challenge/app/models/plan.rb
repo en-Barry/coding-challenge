@@ -1,20 +1,12 @@
 # frozen_string_literal: true
 
-class Plan < ActiveYaml::Base
-  include ActiveHash::Associations
-  include ActiveModel::Validations
-
-  fields :name, :provider_id
-
+class Plan < ApplicationRecord
   belongs_to :provider
-  has_many :ampere_based_rates
-  has_many :usage_based_rates
+  has_many :ampere_based_rates, dependent: :destroy
+  has_many :usage_based_rates, dependent: :destroy
 
-  validates :name, :provider_id, presence: true
-  validates :provider_id, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validates :name, presence: true
 
-  # ampere_based_rates レコードの有無で従量課金のみプランを判定する
-  # （フラグを別途持たせるとレコード有無と矛盾し得るため、レコード有無を単一の真実とする）
   def metered_only?
     ampere_based_rates.empty?
   end
