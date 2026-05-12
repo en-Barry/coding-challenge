@@ -38,6 +38,15 @@ Metrics/BlockLength:
     - "config/routes.rb"
     - "config/environments/*.rb"
 
+# マイグレーションは生成 DSL で長くなりがちなため除外する
+Metrics/AbcSize:
+  Exclude:
+    - "db/migrate/**/*.rb"
+
+Metrics/MethodLength:
+  Exclude:
+    - "db/migrate/**/*.rb"
+
 RSpec/ExampleLength:
   Max: 10
 
