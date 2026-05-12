@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class ElectricityBillSimulator
-  VALID_AMPERES = [10, 15, 20, 30, 40, 50, 60].freeze
-  MAX_KWH = 9999
+  include ElectricityBillConstants
 
   def self.call(ampere:, kwh:)
     new(ampere: ampere, kwh: kwh).call

@@ -64,6 +64,7 @@ Rails/FindEach:
 RSpec/DescribeClass:
   Exclude:
     - "spec/data_consistency_spec.rb"
+    - "spec/requests/**/*"
 
 RSpec/IteratedExpectation:
   Exclude:
