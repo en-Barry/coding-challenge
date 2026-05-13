@@ -17,7 +17,7 @@ class ElectricityBillSimulator
   def call
     Plan.includes(:provider, :ampere_based_rates, :usage_based_rates)
         .filter_map { |plan| pair_with_price(plan) }
-        .sort_by { |plan, price| [price, plan.provider_id, plan.id] }
+        .sort_by { |plan, price| [price, plan.provider.name, plan.name] }
         .map { |plan, price| { provider_name: plan.provider.name, plan_name: plan.name, price: price } }
   end
 
@@ -38,17 +38,10 @@ class ElectricityBillSimulator
 
   # アンペア非対応プランは nil を返し、filter_map で除外する
   def pair_with_price(plan)
-    base = base_price(plan)
+    base = plan.base_price_for(@ampere)
     return nil if base.nil?
 
     [plan, (base + usage_price(plan)).floor.to_i]
-  end
-
-  # 従量課金のみプランは基本料金 0、それ以外は ampere 一致レコードが無ければ nil
-  def base_price(plan)
-    return BigDecimal(0) if plan.metered_only?
-
-    plan.ampere_based_rates.detect { |r| r.ampere == @ampere }&.rate
   end
 
   def usage_price(plan)

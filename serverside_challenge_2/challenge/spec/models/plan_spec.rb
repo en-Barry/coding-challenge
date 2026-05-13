@@ -35,16 +35,34 @@ RSpec.describe Plan do
     end
   end
 
-  describe '#metered_only?' do
-    it 'ampere_based_rates が存在しない場合に true を返す' do
-      plan = create(:plan)
-      expect(plan.metered_only?).to be true
+  describe '#base_price_for' do
+    let(:plan) { create(:plan) }
+
+    context 'when ampere_based_rates が空 (基本料金 0 円のプラン)' do
+      it 'BigDecimal(0) を返す' do
+        expect(plan.base_price_for(30)).to eq BigDecimal(0)
+      end
     end
 
-    it 'ampere_based_rates が存在する場合は false を返す' do
-      plan = create(:plan)
-      create(:ampere_based_rate, plan: plan)
-      expect(plan.metered_only?).to be false
+    context 'when 該当 ampere の rate が存在する' do
+      before do
+        create(:ampere_based_rate, plan: plan, ampere: 30, rate: '858.00')
+        create(:ampere_based_rate, plan: plan, ampere: 40, rate: '1144.00')
+      end
+
+      it '該当 ampere の rate を返す' do
+        expect(plan.base_price_for(30)).to eq BigDecimal('858.00')
+      end
+    end
+
+    context 'when ampere_based_rates にレコードあり、ただし該当 ampere は未対応' do
+      before do
+        create(:ampere_based_rate, plan: plan, ampere: 30, rate: '858.00')
+      end
+
+      it 'nil を返す (プラン除外シグナル)' do
+        expect(plan.base_price_for(20)).to be_nil
+      end
     end
   end
 end

@@ -1,77 +1,59 @@
 # 東京電力エナジーパートナー / 従量電灯B
-- id: 1
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 10
   rate: "286.00"
-- id: 2
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 15
   rate: "429.00"
-- id: 3
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 20
   rate: "572.00"
-- id: 4
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 30
   rate: "858.00"
-- id: 5
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 40
   rate: "1144.00"
-- id: 6
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 50
   rate: "1430.00"
-- id: 7
-  plan_id: 1
+- plan_name: 従量電灯B
   ampere: 60
   rate: "1716.00"
 
 # 東京電力エナジーパートナー / スタンダードS
-- id: 8
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 10
   rate: "311.75"
-- id: 9
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 15
   rate: "467.63"
-- id: 10
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 20
   rate: "623.50"
-- id: 11
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 30
   rate: "935.25"
-- id: 12
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 40
   rate: "1247.00"
-- id: 13
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 50
   rate: "1558.75"
-- id: 14
-  plan_id: 2
+- plan_name: スタンダードS
   ampere: 60
   rate: "1870.50"
 
 # 東京ガス / ずっとも電気1（10/15/20A は提供なし）
-- id: 15
-  plan_id: 3
+- plan_name: ずっとも電気1
   ampere: 30
   rate: "858.00"
-- id: 16
-  plan_id: 3
+- plan_name: ずっとも電気1
   ampere: 40
   rate: "1144.00"
-- id: 17
-  plan_id: 3
+- plan_name: ずっとも電気1
   ampere: 50
   rate: "1430.00"
-- id: 18
-  plan_id: 3
+- plan_name: ずっとも電気1
   ampere: 60
   rate: "1716.00"

@@ -1,35 +1,28 @@
 # frozen_string_literal: true
 
-seed_config = [
-  { model: Provider,        file: 'providers.yml',          keys: %i[name] },
-  { model: Plan,            file: 'plans.yml',              keys: %i[name provider_id] },
-  { model: AmpereBasedRate, file: 'ampere_based_rates.yml', keys: %i[plan_id ampere rate] },
-  { model: UsageBasedRate,  file: 'usage_based_rates.yml',
-    keys: %i[plan_id kilowatt_hour_low kilowatt_hour_high rate] }
-].freeze
-
-seed_data = seed_config.map do |config|
-  config.merge(records: YAML.load_file(Rails.root.join('db/data', config[:file])))
-end
-
 ActiveRecord::Base.transaction do
-  seed_data.reverse_each do |config|
-    ids_in_yaml = config[:records].pluck('id')
-    config[:model].where.not(id: ids_in_yaml).destroy_all
+  YAML.load_file(Rails.root.join('db/data/providers.yml')).each do |attrs|
+    Provider.find_or_create_by!(name: attrs.fetch('name'))
   end
 
-  seed_data.each do |config|
-    config[:records].each do |attrs|
-      record = config[:model].find_or_initialize_by(id: attrs['id'])
-      record.assign_attributes(attrs.slice(*config[:keys].map(&:to_s)))
-      record.save!
-    end
+  YAML.load_file(Rails.root.join('db/data/plans.yml')).each do |attrs|
+    provider = Provider.find_by!(name: attrs.fetch('provider_name'))
+    Plan.find_or_create_by!(provider: provider, name: attrs.fetch('name'))
+  end
 
-    max_id = config[:model].maximum(:id).to_i
-    next if max_id.zero?
+  YAML.load_file(Rails.root.join('db/data/ampere_based_rates.yml')).each do |attrs|
+    plan = Plan.find_by!(name: attrs.fetch('plan_name'))
+    record = AmpereBasedRate.find_or_initialize_by(plan: plan, ampere: attrs.fetch('ampere'))
+    record.update!(rate: attrs.fetch('rate'))
+  end
 
-    ActiveRecord::Base.connection.execute(
-      "SELECT setval(pg_get_serial_sequence('#{config[:model].table_name}', 'id'), #{max_id})"
+  YAML.load_file(Rails.root.join('db/data/usage_based_rates.yml')).each do |attrs|
+    plan = Plan.find_by!(name: attrs.fetch('plan_name'))
+    record = UsageBasedRate.find_or_initialize_by(
+      plan: plan,
+      kilowatt_hour_low: attrs.fetch('kilowatt_hour_low'),
+      kilowatt_hour_high: attrs.fetch('kilowatt_hour_high')
     )
+    record.update!(rate: attrs.fetch('rate'))
   end
 end
