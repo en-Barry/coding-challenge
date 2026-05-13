@@ -271,7 +271,8 @@ resource "aws_ecs_service" "app" {
   desired_count   = var.ecs_desired_count
   launch_type     = "FARGATE"
 
-  # NAT Gateway 省略のため ECS を public subnet に配置してパブリック IP を付与
+  # 課題環境では NAT Gateway / VPC Endpoint のコストを避けるため public subnet に配置する。
+  # inbound は ECS security group で ALB からの 3000/tcp のみに制限する。
   network_configuration {
     subnets          = var.public_subnet_ids
     security_groups  = [var.sg_ecs_id]
