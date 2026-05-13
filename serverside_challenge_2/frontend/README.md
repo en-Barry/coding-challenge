@@ -88,7 +88,7 @@ GET /api/v1/electricity_bill_simulations?ampere={A}&kwh={kWh}
 ```json
 { "data": [{ "provider_name": "...", "plan_name": "...", "price": 8010 }] }
 ```
-- `price` は整数（円）、price ASC → provider_id ASC → plan_id ASC で並ぶ
+- `price` は整数（円）、price ASC → provider_name ASC → plan_name ASC で並ぶ
 
 エラー 400:
 ```json
@@ -101,7 +101,7 @@ GET /api/v1/electricity_bill_simulations?ampere={A}&kwh={kWh}
 npm run test
 ```
 
-Vitest + Testing Library + jsdom で 16 テストを実行。
+Vitest + Testing Library + jsdom で 17 テストを実行。
 - `api.test.ts`: fetchSimulations の HTTP レイヤーテスト
 - `simulation-form.test.tsx`: Zod バリデーション / submit フロー
 - `simulation-result.test.tsx`: loading / error / empty / results の表示テスト

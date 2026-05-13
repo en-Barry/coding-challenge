@@ -96,7 +96,7 @@ docker build -f Dockerfile.production -t app:prod .
 ```sh
 docker run --rm \
   -e RAILS_ENV=production \
-  -e SECRET_KEY_BASE=$(openssl rand -hex 32) \
+  -e SECRET_KEY_BASE=$(openssl rand -hex 64) \
   -e DATABASE_URL="postgresql://postgres:password@host.docker.internal:5432/app_production" \
   -p 3000:3000 \
   app:prod
@@ -151,11 +151,13 @@ SG=$(cd ../terraform && terraform output -raw ecs_sg_id)
 aws ecs run-task --cluster "$CLUSTER" --task-definition "$TASKDEF" \
   --launch-type FARGATE \
   --network-configuration "awsvpcConfiguration={subnets=[$SUBNET],securityGroups=[$SG],assignPublicIp=ENABLED}" \
-  --overrides '{"containerOverrides":[{"name":"app","command":["bundle","exec","rails","db:migrate"]}]}'
+  --overrides '{"containerOverrides":[{"name":"app","command":["bundle","exec","rails","db:migrate"]}]}' \
+  --region ap-northeast-1
 
 # Seed 投入 (冪等)
 aws ecs run-task --cluster "$CLUSTER" --task-definition "$TASKDEF" \
   --launch-type FARGATE \
   --network-configuration "awsvpcConfiguration={subnets=[$SUBNET],securityGroups=[$SG],assignPublicIp=ENABLED}" \
-  --overrides '{"containerOverrides":[{"name":"app","command":["bundle","exec","rails","db:seed"]}]}'
+  --overrides '{"containerOverrides":[{"name":"app","command":["bundle","exec","rails","db:seed"]}]}' \
+  --region ap-northeast-1
 ```
