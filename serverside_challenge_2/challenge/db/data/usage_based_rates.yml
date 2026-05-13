@@ -1,0 +1,47 @@
+# 東京電力エナジーパートナー / 従量電灯B
+- plan_name: 従量電灯B
+  kilowatt_hour_low: 1
+  kilowatt_hour_high: 120
+  rate: "19.88"
+- plan_name: 従量電灯B
+  kilowatt_hour_low: 121
+  kilowatt_hour_high: 300
+  rate: "26.48"
+- plan_name: 従量電灯B
+  kilowatt_hour_low: 301
+  kilowatt_hour_high: 9999
+  rate: "30.57"
+
+# 東京電力エナジーパートナー / スタンダードS
+- plan_name: スタンダードS
+  kilowatt_hour_low: 1
+  kilowatt_hour_high: 120
+  rate: "29.80"
+- plan_name: スタンダードS
+  kilowatt_hour_low: 121
+  kilowatt_hour_high: 300
+  rate: "36.40"
+- plan_name: スタンダードS
+  kilowatt_hour_low: 301
+  kilowatt_hour_high: 9999
+  rate: "40.49"
+
+# 東京ガス / ずっとも電気1
+- plan_name: ずっとも電気1
+  kilowatt_hour_low: 1
+  kilowatt_hour_high: 140
+  rate: "23.67"
+- plan_name: ずっとも電気1
+  kilowatt_hour_low: 141
+  kilowatt_hour_high: 350
+  rate: "23.88"
+- plan_name: ずっとも電気1
+  kilowatt_hour_low: 351
+  kilowatt_hour_high: 9999
+  rate: "26.41"
+
+# Looopでんき / おうちプラン（従量料金1段のみ・基本料金なし）
+- plan_name: おうちプラン
+  kilowatt_hour_low: 1
+  kilowatt_hour_high: 9999
+  rate: "28.8"

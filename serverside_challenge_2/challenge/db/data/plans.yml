@@ -1,0 +1,8 @@
+- name: 従量電灯B
+  provider_name: 東京電力エナジーパートナー
+- name: スタンダードS
+  provider_name: 東京電力エナジーパートナー
+- name: ずっとも電気1
+  provider_name: 東京ガス
+- name: おうちプラン
+  provider_name: Looopでんき
