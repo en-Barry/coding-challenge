@@ -11,13 +11,15 @@ resource "aws_cloudfront_distribution" "main" {
     origin_id   = "alb"
 
     custom_origin_config {
-      http_port              = 80
-      https_port             = 443
+      http_port  = 80
+      https_port = 443
+      # 独自ドメイン + ACM を使わない低コスト構成のため、viewer 側 HTTPS は
+      # CloudFront で終端し、origin の ALB へは HTTP で転送する。
       origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
 
-    # ALB 側でこのヘッダーを検証し CloudFront 以外からの直接アクセスを拒否する
+    # ALB 側でこのヘッダーを検証し CloudFront 以外からの直接アクセスを拒否する簡易策。
     custom_header {
       name  = "X-Origin-Verify"
       value = var.origin_verify_secret

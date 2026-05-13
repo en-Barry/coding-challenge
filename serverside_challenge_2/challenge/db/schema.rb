@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_07_000000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_13_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,7 +51,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_07_000000) do
     t.datetime "updated_at", null: false
     t.index ["plan_id", "kilowatt_hour_low", "kilowatt_hour_high"], name: "index_usage_based_rates_on_plan_and_range", unique: true
     t.index ["plan_id"], name: "index_usage_based_rates_on_plan_id"
-    t.check_constraint "kilowatt_hour_low <= kilowatt_hour_high", name: "usage_based_rates_low_le_high"
+    t.check_constraint "kilowatt_hour_low < kilowatt_hour_high", name: "usage_based_rates_low_lt_high"
     t.check_constraint "kilowatt_hour_low > 0", name: "usage_based_rates_low_positive"
     t.check_constraint "rate >= 0::numeric", name: "usage_based_rates_rate_non_negative"
   end

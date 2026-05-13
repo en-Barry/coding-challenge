@@ -30,6 +30,11 @@ variable "origin_verify_secret" {
   type        = string
   sensitive   = true
   description = "CloudFront → ALB 間の X-Origin-Verify ヘッダー値。推測困難な値を設定すること"
+
+  validation {
+    condition     = var.origin_verify_secret != "CHANGE_ME"
+    error_message = "origin_verify_secret must be changed from the example value."
+  }
 }
 
 variable "database_url" {
@@ -50,4 +55,17 @@ variable "ecs_desired_count" {
   type        = number
   default     = 0
   description = "ECS サービスの desired_count。シークレット設定前は 0 のままにする"
+
+  validation {
+    condition     = var.ecs_desired_count >= 0
+    error_message = "ecs_desired_count must be greater than or equal to 0."
+  }
+
+  validation {
+    condition = (
+      var.ecs_desired_count == 0 ||
+      (var.database_url != null && var.secret_key_base != null)
+    )
+    error_message = "database_url and secret_key_base must be set when ecs_desired_count is greater than 0."
+  }
 }
