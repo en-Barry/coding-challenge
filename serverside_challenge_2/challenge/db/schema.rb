@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_13_000000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_14_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,10 +29,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_13_000000) do
   create_table "plans", force: :cascade do |t|
     t.bigint "provider_id", null: false
     t.string "name", null: false
+    t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["provider_id", "name"], name: "index_plans_on_provider_id_and_name", unique: true
     t.index ["provider_id"], name: "index_plans_on_provider_id"
+    t.index ["slug"], name: "index_plans_on_slug", unique: true
   end
 
   create_table "providers", force: :cascade do |t|
@@ -52,7 +54,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_13_000000) do
     t.index ["plan_id", "kilowatt_hour_low", "kilowatt_hour_high"], name: "index_usage_based_rates_on_plan_and_range", unique: true
     t.index ["plan_id"], name: "index_usage_based_rates_on_plan_id"
     t.check_constraint "kilowatt_hour_low < kilowatt_hour_high", name: "usage_based_rates_low_lt_high"
-    t.check_constraint "kilowatt_hour_low > 0", name: "usage_based_rates_low_positive"
+    t.check_constraint "kilowatt_hour_low >= 0", name: "usage_based_rates_low_non_negative"
     t.check_constraint "rate >= 0::numeric", name: "usage_based_rates_rate_non_negative"
   end
 

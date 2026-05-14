@@ -33,8 +33,8 @@ describe("SimulationResult", () => {
 
     expect(screen.getByText("東京電力")).toBeInTheDocument();
     expect(screen.getByText("従量電灯B")).toBeInTheDocument();
-    // jsdom の Intl は全角円記号 ￥（U+FFE5）を使う
-    expect(screen.getByText("￥8,010")).toBeInTheDocument();
+    // Intl.NumberFormat の通貨記号は Node/ICU バージョンによって全角 ￥(U+FFE5) / 半角 ¥(U+00A5) のどちらにもなり得るため両方許容する
+    expect(screen.getByText(/[¥￥]8,010/)).toBeInTheDocument();
     expect(screen.getByText("東京ガス")).toBeInTheDocument();
     expect(screen.getByText("ずっとも電気1")).toBeInTheDocument();
   });

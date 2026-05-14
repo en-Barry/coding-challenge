@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class AmpereBasedRate < ApplicationRecord
+  include ElectricityBillConstants
+
   belongs_to :plan
 
-  validates :ampere, presence: true, inclusion: { in: [10, 15, 20, 30, 40, 50, 60] }
+  validates :ampere, presence: true, inclusion: { in: VALID_AMPERES }
   validates :rate, presence: true, numericality: { greater_than_or_equal_to: 0 }
 end

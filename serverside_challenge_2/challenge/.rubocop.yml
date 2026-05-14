@@ -37,6 +37,7 @@ Metrics/BlockLength:
     - "spec/**/*"
     - "config/routes.rb"
     - "config/environments/*.rb"
+    - "db/seeds.rb"
 
 # マイグレーションは生成 DSL で長くなりがちなため除外する
 Metrics/AbcSize:

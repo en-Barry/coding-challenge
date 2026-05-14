@@ -4,7 +4,14 @@ require 'rails_helper'
 
 RSpec.describe AmpereBasedRate do
   describe 'バリデーション' do
-    it 'ampere が許容アンペア数以外だと invalid になる' do
+    it 'ampere が VALID_AMPERES (10/15/20/30/40/50/60) のいずれかなら valid になる' do
+      ElectricityBillConstants::VALID_AMPERES.each do |ampere|
+        record = build(:ampere_based_rate, ampere: ampere)
+        expect(record).to be_valid, "ampere=#{ampere} で invalid: #{record.errors.full_messages}"
+      end
+    end
+
+    it 'ampere が VALID_AMPERES 以外だと invalid になる' do
       record = build(:ampere_based_rate, ampere: 25)
       expect(record).not_to be_valid
       expect(record.errors[:ampere]).to be_present
