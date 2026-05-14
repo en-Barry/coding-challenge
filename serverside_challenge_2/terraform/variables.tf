@@ -35,6 +35,19 @@ variable "origin_verify_secret" {
     condition     = var.origin_verify_secret != "CHANGE_ME"
     error_message = "origin_verify_secret must be changed from the example value."
   }
+
+  validation {
+    condition     = length(var.origin_verify_secret) >= 32
+    error_message = "origin_verify_secret must be at least 32 characters."
+  }
+
+  validation {
+    condition = (
+      can(regex("[A-Za-z]", var.origin_verify_secret)) &&
+      can(regex("[0-9]", var.origin_verify_secret))
+    )
+    error_message = "origin_verify_secret must contain both letters and digits."
+  }
 }
 
 variable "database_url" {

@@ -3,8 +3,10 @@
 class UsageBasedRate < ApplicationRecord
   belongs_to :plan
 
-  validates :kilowatt_hour_low, :kilowatt_hour_high, presence: true,
-                                                     numericality: { only_integer: true, greater_than: 0 }
+  validates :kilowatt_hour_low, presence: true,
+                                numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :kilowatt_hour_high, presence: true,
+                                 numericality: { only_integer: true, greater_than: 0 }
   validates :rate, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validate :low_must_not_exceed_high
 
