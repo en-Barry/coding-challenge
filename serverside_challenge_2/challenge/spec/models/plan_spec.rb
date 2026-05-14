@@ -15,6 +15,19 @@ RSpec.describe Plan do
       expect(record).not_to be_valid
       expect(record.errors[:provider]).to be_present
     end
+
+    it 'slug が空だと invalid になる' do
+      record = build(:plan, slug: nil)
+      expect(record).not_to be_valid
+      expect(record.errors[:slug]).to be_present
+    end
+
+    it 'slug が重複すると invalid になる' do
+      create(:plan, slug: 'duplicated-slug')
+      record = build(:plan, slug: 'duplicated-slug')
+      expect(record).not_to be_valid
+      expect(record.errors[:slug]).to be_present
+    end
   end
 
   describe 'アソシエーション' do
@@ -38,12 +51,6 @@ RSpec.describe Plan do
   describe '#base_price_for' do
     let(:plan) { create(:plan) }
 
-    context 'when ampere_based_rates が空 (基本料金 0 円のプラン)' do
-      it 'BigDecimal(0) を返す' do
-        expect(plan.base_price_for(30)).to eq BigDecimal(0)
-      end
-    end
-
     context 'when 該当 ampere の rate が存在する' do
       before do
         create(:ampere_based_rate, plan: plan, ampere: 30, rate: '858.00')
@@ -52,6 +59,16 @@ RSpec.describe Plan do
 
       it '該当 ampere の rate を返す' do
         expect(plan.base_price_for(30)).to eq BigDecimal('858.00')
+      end
+    end
+
+    context 'when 該当 ampere の rate が 0 円で存在する (基本料金なしプラン)' do
+      before do
+        create(:ampere_based_rate, plan: plan, ampere: 30, rate: '0.00')
+      end
+
+      it 'BigDecimal(0) を返す' do
+        expect(plan.base_price_for(30)).to eq BigDecimal(0)
       end
     end
 

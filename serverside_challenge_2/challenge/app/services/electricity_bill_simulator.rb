@@ -52,8 +52,7 @@ class ElectricityBillSimulator
 
   def billable_kwh_for(usage_rate)
     upper = [@kwh, usage_rate.kilowatt_hour_high].min
-    consumed = upper - usage_rate.kilowatt_hour_low + 1
 
-    [consumed, 0].max
+    [upper - usage_rate.kilowatt_hour_low, 0].max
   end
 end

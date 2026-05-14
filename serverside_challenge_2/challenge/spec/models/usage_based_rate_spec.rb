@@ -31,14 +31,19 @@ RSpec.describe UsageBasedRate do
       expect(record.errors[:kilowatt_hour_low]).to include('は kilowatt_hour_high より小さくなければなりません')
     end
 
-    it 'kilowatt_hour_low が 0 以下だと invalid になる' do
-      record = build(:usage_based_rate, kilowatt_hour_low: 0)
+    it 'kilowatt_hour_low が 0 だと valid になる (0 始まり境界共有を許容)' do
+      record = build(:usage_based_rate, kilowatt_hour_low: 0, kilowatt_hour_high: 120)
+      expect(record).to be_valid
+    end
+
+    it 'kilowatt_hour_low が負の数だと invalid になる' do
+      record = build(:usage_based_rate, kilowatt_hour_low: -1)
       expect(record).not_to be_valid
       expect(record.errors[:kilowatt_hour_low]).to be_present
     end
 
     it 'kilowatt_hour_high が 0 以下だと invalid になる' do
-      record = build(:usage_based_rate, kilowatt_hour_low: 1, kilowatt_hour_high: 0)
+      record = build(:usage_based_rate, kilowatt_hour_low: 0, kilowatt_hour_high: 0)
       expect(record).not_to be_valid
       expect(record.errors[:kilowatt_hour_high]).to be_present
     end

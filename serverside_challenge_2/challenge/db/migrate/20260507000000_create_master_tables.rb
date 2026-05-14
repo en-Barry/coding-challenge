@@ -12,9 +12,11 @@ class CreateMasterTables < ActiveRecord::Migration[7.0]
     create_table :plans do |t|
       t.references :provider, null: false, foreign_key: true
       t.string :name, null: false
+      t.string :slug, null: false
       t.timestamps
 
       t.index %i[provider_id name], unique: true
+      t.index :slug, unique: true
     end
 
     create_table :ampere_based_rates do |t|

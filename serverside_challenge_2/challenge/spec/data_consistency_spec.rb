@@ -24,21 +24,21 @@ RSpec.describe 'シードデータの整合性' do
   end
 
   describe '料金レンジの連続性' do
-    it '各プランの usage_based_rates の最初の段は low=1 から始まる' do
+    it '各プランの usage_based_rates の最初の段は low=0 から始まる' do
       Plan.find_each do |plan|
         sorted = plan.usage_based_rates.order(:kilowatt_hour_low)
         next if sorted.empty?
 
         first_low = sorted.first.kilowatt_hour_low
-        expect(first_low).to eq(1), "Plan##{plan.id}: 最初の段の low は 1 のはずが #{first_low}"
+        expect(first_low).to eq(0), "Plan##{plan.id}: 最初の段の low は 0 のはずが #{first_low}"
       end
     end
 
-    it '各プランの usage_based_rates は段の間に穴も重複もなく連続している' do
+    it '各プランの usage_based_rates は段の間に穴も重複もなく境界値を共有して連続している' do
       Plan.find_each do |plan|
         ranges = plan.usage_based_rates.order(:kilowatt_hour_low).pluck(:kilowatt_hour_low, :kilowatt_hour_high)
         ranges.each_cons(2) do |(_, prev_high), (next_low, _)|
-          expect(next_low).to eq(prev_high + 1)
+          expect(next_low).to eq(prev_high)
         end
       end
     end
